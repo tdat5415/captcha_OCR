@@ -201,9 +201,64 @@ history = model.fit(
 
 이런 그래프는 처음본다.
 
+```python
+from tensorflow.keras import layers
+from tensorflow import keras
+
+class CTCDecodeLayer(layers.Layer):
+    def __init__(self, **kwargs):
+        super(CTCDecodeLayer, self).__init__(**kwargs)
+        self.decoder = keras.backend.ctc_decode
+    
+    def __call__(self, y_pred):
+        shape = tf.shape(y_pred)
+        input_len = tf.ones(shape[0]) * tf.cast(shape[1], dtype=tf.float32)
+        results = self.decoder(y_pred, input_length=input_len, greedy=True)[0][0][:,:max_length]
+        return tf.strings.reduce_join(num_to_char(results), axis=1)
+
+image = layers.Input(shape=(img_width, img_height, 1), name='Image')
+y_pred = model(image, training=False)
+decoded = CTCDecodeLayer(name='CTC_Decode')(y_pred)
+inference_model = tf.keras.Model(inputs=image, outputs=decoded)
+
+inference_model.summary()
+```
+
+image to string 모델이다.
+
+이미지를 넣으면 문자열로 바로나오게 inference_model을 만들었다.
+
+```python
+import numpy as np
+
+for batch in validation_dataset.take(1):
+    batch_images, batch_labels = batch
+
+    batch_preds = inference_model.predict(batch_images)
+    batch_labels = tf.strings.reduce_join(num_to_char(batch_labels), axis=1).numpy()
+
+    batch_preds = list(map(lambda x:x.decode('utf-8'), batch_preds))
+    batch_labels = list(map(lambda x:x.decode('utf-8'), batch_labels))
+
+    _, ax = plt.subplots(4, 4, figsize=(15, 5))
+    for i in range(len(batch_preds)):
+        img = (batch_images[i, :, :, 0] * 255).numpy().astype(np.uint8)
+        img = img.T
+        title = f"Prediction: {batch_preds[i]}"
+        ax[i // 4, i % 4].imshow(img, cmap="gray")
+        ax[i // 4, i % 4].set_title(title)
+        ax[i // 4, i % 4].axis("off")
+plt.show()
+```
+![다운로드](https://user-images.githubusercontent.com/48349693/132122758-c1c434f7-31ae-4aa3-a1f2-a1e655d9b9d7.png)
+
+
 ---
 
 참고 URL : 
+
 <https://keras.io/examples/vision/captcha_ocr/>
+
 <https://hulk89.github.io/machine%20learning/2018/01/30/ctc/>
+
 <https://www.kaggle.com/fournierp/captcha-version-2-images>
