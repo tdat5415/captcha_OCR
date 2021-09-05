@@ -26,7 +26,9 @@ print("Characters present: ", chars)
 ```
 
 이미지경로와 라벨 얻기
+
 어떤 글자가 쓰였는지도 필요하다.
+
 결과는 다음과 같다.
 
 ```
@@ -165,9 +167,13 @@ model.summary()
 ```
 
 모델생성함수부분이다.
+
 원본코드에서는 Dense layer를 사용하였지만
+
 생각해보면 Conv1D layer로 kernel_size를 1로만 하면 같은 연결이 만들어진다.
+
 원본코드의 CTC_layer도 뺐고 따로 CTC_loss함수로 만들었는데 
+
 왜 복잡하게 모델안에서 loss를 처리하려했는지는 모르겠다.
 
 ```python
@@ -188,6 +194,7 @@ history = model.fit(
 ```
 
 원본코드와 동일하게 학습시켰다.
+
 그런데 학습과정이 좀 특이하다.
 
 ![다운로드](https://user-images.githubusercontent.com/48349693/132122661-3e8c9c77-9ea7-4da1-9921-f8513ca32e25.png)
