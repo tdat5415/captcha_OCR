@@ -250,8 +250,10 @@ for batch in validation_dataset.take(1):
         ax[i // 4, i % 4].axis("off")
 plt.show()
 ```
-![다운로드](https://user-images.githubusercontent.com/48349693/132122758-c1c434f7-31ae-4aa3-a1f2-a1e655d9b9d7.png)
 
+![캡처](https://user-images.githubusercontent.com/48349693/132122779-484f2f67-cbdb-4146-bba2-694b90d11af5.PNG)
+
+매우 정확하게 나온것 같다.
 
 ---
 
